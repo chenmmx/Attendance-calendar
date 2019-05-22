@@ -1,7 +1,8 @@
 <template>
   <div id="ch-calendar">
     <div class="ch-calendar-title">
-      <span style="margin-right: 30px;">{{data.personName}}</span><span>{{data.personGroup}}</span>
+      <span style="margin-right: 30px;">{{ data.personName }}</span
+      ><span>{{ data.personGroup }}</span>
     </div>
     <div class="ch-calendar-main">
       <div class="calendar">
@@ -36,7 +37,23 @@
               {{ item }}
             </div>
             <div
-              :class="`calendar-main-block--item ${(normalArray.indexOf(item) === -1) ? '' : 'normal'} ${(abnormalArray.indexOf(item) === -1) ? '' : 'abnormal'} ${isSelect === item ? 'select' : ''} ${new Date().getDate() === item && new Date().getMonth() === selectedMonth - 1 ? 'today' : ''}`"
+              :class="
+                `calendar-main-block--item ${
+                  normalArray.indexOf(item) === -1 ? '' : 'normal'
+                } ${abnormalArray.indexOf(item) === -1 ? '' : 'abnormal'} ${
+                  isSelect === item &&
+                  selectedYear === clickYear &&
+                  selectedMonth === clickMonth
+                    ? 'select'
+                    : ''
+                } ${
+                  new Date().getDate() === item &&
+                  new Date().getMonth() === selectedMonth - 1 &&
+                  new Date().getFullYear() === selectedYear
+                    ? 'today'
+                    : ''
+                }`
+              "
               v-for="(item, index) of mainDate"
               :key="index"
               @click="onDateClick(item)"
@@ -107,7 +124,9 @@ export default {
         parseInt(new Date().getMonth()) + 1 < 10
           ? '0' + (parseInt(new Date().getMonth()) + 1)
           : parseInt(new Date().getMonth()) + 1,
-      isSelect: ''
+      isSelect: '',
+      clickMonth: '',
+      clickYear: ''
     }
   },
   methods: {
@@ -145,7 +164,6 @@ export default {
     },
     // 前一月
     onPreClick () {
-      this.isSelect = ''
       this.selectedMonth =
         parseInt(this.selectedMonth) - 1 < 10
           ? '0' + (parseInt(this.selectedMonth) - 1)
@@ -160,7 +178,6 @@ export default {
     },
     // 后一月
     onNextClick () {
-      this.isSelect = ''
       this.selectedMonth =
         parseInt(this.selectedMonth) + 1 < 10
           ? '0' + (parseInt(this.selectedMonth) + 1)
@@ -175,7 +192,13 @@ export default {
     },
     // 日期点击
     onDateClick (val) {
-      let nowDate = `${this.selectedYear}-${this.selectedMonth}-${val < 10 ? '0' + val : val}`
+      // 记录当前点击后的年份和月份
+      this.clickYear = this.selectedYear
+      this.clickMonth = this.selectedMonth
+
+      let nowDate = `${this.selectedYear}-${this.selectedMonth}-${
+        val < 10 ? '0' + val : val
+      }`
       this.$emit('click', nowDate)
       this.isSelect = val
     }
@@ -282,39 +305,39 @@ export default {
             }
           }
           .calendar-main-block--item.normal {
-              position: relative;
-              &::before {
-                  display: inline-block;
-                  position: absolute;
-                  bottom: 0;
-                  left: 14px;
-                  content: '';
-                  width: 8px;
-                  height: 8px;
-                  border-radius: 50px;
-                  background-color: #007afe;
-              }
+            position: relative;
+            &::before {
+              display: inline-block;
+              position: absolute;
+              bottom: 0;
+              left: 14px;
+              content: "";
+              width: 8px;
+              height: 8px;
+              border-radius: 50px;
+              background-color: #007afe;
+            }
           }
           .calendar-main-block--item.abnormal {
-              position: relative;
-              &::before {
-                  display: inline-block;
-                  position: absolute;
-                  bottom: 0;
-                  left: 14px;
-                  content: '';
-                  width: 8px;
-                  height: 8px;
-                  border-radius: 50px;
-                  background-color: red;
-              }
+            position: relative;
+            &::before {
+              display: inline-block;
+              position: absolute;
+              bottom: 0;
+              left: 14px;
+              content: "";
+              width: 8px;
+              height: 8px;
+              border-radius: 50px;
+              background-color: red;
+            }
           }
           .calendar-main-block--item.select {
-              background-color: #007afe;
-              color: #fff;
+            background-color: #007afe;
+            color: #fff;
           }
           .calendar-main-block--item.today {
-              border: 1px solid #007afe;
+            border: 1px solid #007afe;
           }
         }
       }
